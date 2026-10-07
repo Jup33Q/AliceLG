@@ -39,7 +39,7 @@ bl_info = {
 # Load System Modules
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import importlib
-import sys, platform
+import sys, os, platform
 
 
 # Load Globals
@@ -52,6 +52,11 @@ try:
 except:
 
 	from .globals import *
+
+# make sure the runtime directories exist (they may be missing when the
+# add-on was installed from a zip archive, which skips empty directories)
+os.makedirs(LookingGlassAddon.logpath, exist_ok=True)
+os.makedirs(LookingGlassAddon.tmp_path, exist_ok=True)
 
 # Debugging Settings
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
