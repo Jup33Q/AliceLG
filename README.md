@@ -1,5 +1,21 @@
 # Alice/LG 2.3 - The Blender Add-on for Looking Glass Displays
 
+> **Fork note (branch `blender-5.2`):** This fork adapts Alice/LG 2.3.x for **Blender 5.2 (Python 3.13)**, verified on macOS (Apple Silicon) with Blender 5.2.2 LTS + Looking Glass Bridge 2.6.3.
+>
+> **Install from source:**
+> ```bash
+> git clone -b blender-5.2 https://github.com/Jup33Q/AliceLG
+> # symlink or copy into Blender's addons dir, e.g. on macOS:
+> ln -s "$PWD/AliceLG" "$HOME/Library/Application Support/Blender/5.2/scripts/addons/AliceLG"
+> ```
+> Then enable "Alice/LG" in Blender → Preferences → Add-ons and click **Install** in the add-on preferences to fetch the Python dependencies (pynng, opencv) into `lib/`. If the button fails, run manually:
+> ```bash
+> BLENDER_PY="/path/to/Blender.app/Contents/Resources/5.2/python/bin/python3.13"
+> "$BLENDER_PY" -m pip install --target "AliceLG/lib" pynng opencv-python --no-deps
+> "$BLENDER_PY" -m pip install --target "AliceLG/lib" cffi sniffio
+> ```
+> (numpy is already bundled with Blender — do not install it into `lib/`.)
+
 ### Let [Alice/LG](https://github.com/regcs/AliceLG/releases) take your Blender artworks through the Looking Glass! This short guide is to get you started.
 
 ## About the Add-on
