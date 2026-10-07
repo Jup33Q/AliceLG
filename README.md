@@ -11,7 +11,7 @@
 > Then enable "Alice/LG" in Blender → Preferences → Add-ons and click **Install** in the add-on preferences to fetch the Python dependencies (pynng, opencv) into `lib/`. If the button fails, run manually:
 > ```bash
 > BLENDER_PY="/path/to/Blender.app/Contents/Resources/5.2/python/bin/python3.13"
-> "$BLENDER_PY" -m pip install --target "AliceLG/lib" pynng opencv-python --no-deps
+> "$BLENDER_PY" -m pip install --target "AliceLG/lib" pynng opencv-python-headless --no-deps
 > "$BLENDER_PY" -m pip install --target "AliceLG/lib" cffi sniffio
 > ```
 > (numpy is already bundled with Blender — do not install it into `lib/`.)
