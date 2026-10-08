@@ -846,8 +846,9 @@ class LookingGlassAddonSettingsWM(bpy.types.PropertyGroup):
 
 	# Lightfield Viewport Modes
 	lightfieldMode: bpy.props.EnumProperty(
-										items = [('0', 'Refresh Mode: Automatic', 'Automatically refresh the light field viewport'),
-												 ('1', 'Refresh Mode: Manual', 'Manually refresh the light field viewport')],
+										items = [('0', 'Refresh Mode: Automatic', 'Automatically refresh the light field viewport when the scene changes'),
+												 ('1', 'Refresh Mode: Manual', 'Manually refresh the light field viewport'),
+												 ('2', 'Refresh Mode: Continuous', 'Continuously re-render the light field viewport, even if nothing changed (active refresh)')],
 										default='1',
 										name="Light Field Viewport Modes",
 										update=LookingGlassAddonUI.update_lightfield_window_settings,
