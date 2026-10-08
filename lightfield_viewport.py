@@ -314,6 +314,9 @@ class LOOKINGGLASS_OT_render_viewport(bpy.types.Operator):
 	skip_views = 1
 	restricted_viewcone_limit = 0
 
+	# timestamp of the last render in continuous (active) refresh mode
+	last_continuous_render = 0.0
+
 	# DEBUGING VARIABLES
 	start_multi_view = 0
 
@@ -532,6 +535,17 @@ class LOOKINGGLASS_OT_render_viewport(bpy.types.Operator):
 			# re-render on every timer tick, regardless of whether something
 			# in the scene has changed (i.e., not driven by depsgraph updates)
 			if int(self.addon_settings_window_manager.renderMode) == 0 and int(self.addon_settings_window_manager.lightfieldMode) == 2:
+
+				# throttle the refresh rate: since each render blocks Blender's
+				# main thread, unlimited refresh makes the UI unresponsive
+				fps = max(1, self.addon_settings_window_manager.continuous_refresh_fps)
+				if (time.time() - self.last_continuous_render) < (1.0 / fps):
+
+					# skip this timer tick
+					return {'RUNNING_MODAL'}
+
+				# remember the time of this render
+				self.last_continuous_render = time.time()
 
 				# update the viewport settings
 				self.updateViewportSettings(context)
@@ -1796,7 +1810,9 @@ class BlockRenderer:
 
 		def invoke(self, context, event):
 
-			if (context is None) or (event is None) or (not context is None and context.area is None) or not hasattr(context.scene, "addon_settings"):
+			# never swallow events: if anything is unexpected, pass the event
+			# through so viewport interaction (e.g. G/S/R transforms) keeps working
+			if (context is None) or (event is None) or (not context is None and (context.area is None or context.region is None or context.space_data is None)) or not hasattr(context.scene, "addon_settings"):
 				return {'PASS_THROUGH'}
 
 			# if the hologram preview is not active
