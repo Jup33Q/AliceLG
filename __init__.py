@@ -266,11 +266,14 @@ def LookingGlassAddonInitHandler(dummy1, dummy2):
 		# ------------ BPY EXTENSIONS ---------------
 		# EXTENSION OF BPY TYPES BY USEFULL PROPERTIES
 		# Addon settings
-		bpy.types.WindowManager.addon_settings = bpy.props.PointerProperty(type=LookingGlassAddonSettingsWM)
-		bpy.types.Scene.addon_settings = bpy.props.PointerProperty(type=LookingGlassAddonSettingsScene)
+		if not hasattr(bpy.types.WindowManager, "addon_settings"):
+			bpy.types.WindowManager.addon_settings = bpy.props.PointerProperty(type=LookingGlassAddonSettingsWM)
+		if not hasattr(bpy.types.Scene, "addon_settings"):
+			bpy.types.Scene.addon_settings = bpy.props.PointerProperty(type=LookingGlassAddonSettingsScene)
 
 		# Camera settings
-		bpy.types.Camera.is_lightfield = bpy.props.BoolProperty(default=False, options=set(['HIDDEN']))
+		if not hasattr(bpy.types.Camera, "is_lightfield"):
+			bpy.types.Camera.is_lightfield = bpy.props.BoolProperty(default=False, options=set(['HIDDEN']))
 
 		# ------------ INITIALIZATION ---------------
 		# check if lockfile exists and set status variable
@@ -413,6 +416,14 @@ def register():
 		# register all basic operators of the addon
 		bpy.utils.register_class(LookingGlassAddonSettingsWM)
 		bpy.utils.register_class(LookingGlassAddonSettingsScene)
+
+		# extend bpy types right away, so the panels can be drawn immediately
+		# after enabling the add-on, even before any file was (re)loaded
+		# NOTE: the load_post handler assigns these too, guarded by hasattr()
+		bpy.types.WindowManager.addon_settings = bpy.props.PointerProperty(type=LookingGlassAddonSettingsWM)
+		bpy.types.Scene.addon_settings = bpy.props.PointerProperty(type=LookingGlassAddonSettingsScene)
+		bpy.types.Camera.is_lightfield = bpy.props.BoolProperty(default=False, options=set(['HIDDEN']))
+
 		bpy.utils.register_class(LOOKINGGLASS_OT_refresh_display_list)
 		bpy.utils.register_class(LOOKINGGLASS_OT_lightfield_window)
 		bpy.utils.register_class(LOOKINGGLASS_OT_refresh_lightfield)
@@ -614,7 +625,9 @@ def unregister():
         # preferences
 		bpy.utils.unregister_class(LOOKINGGLASS_PT_preferences)
 		# delete all variables
+		if hasattr(bpy.types.WindowManager, "addon_settings"): del bpy.types.WindowManager.addon_settings
 		if hasattr(bpy.types.Scene, "addon_settings"): del bpy.types.Scene.addon_settings
+		if hasattr(bpy.types.Camera, "is_lightfield"): del bpy.types.Camera.is_lightfield
 
 
 	# log info
